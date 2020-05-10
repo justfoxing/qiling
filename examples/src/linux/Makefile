@@ -34,6 +34,9 @@ arm_hello: hello.c
 arm_hello_static: hello.c
 	arm-linux-gnueabihf-gcc -Wall -O2 -s -static $< -o $@
 
+arm_posix_syscall: posix_syscall.c
+	arm-linux-gnueabihf-gcc -Wall -O2 -s $< -o $@
+
 arm64_hello: hello.c
 	aarch64-linux-gnu-gcc -Wall -O2 -s $< -o $@
 

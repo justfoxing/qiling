@@ -233,108 +233,127 @@ class ELFTest(unittest.TestCase):
         del ql
 
 
-    # syscall testing for ARM, will be uncomment after ARM executable generated properly.
-    # def test_elf_linux_arm_posix_syscall(self):
-        # def test_syscall_read(ql, read_fd, read_buf, read_count, *args):
-            # target = False
-            # pathname = ql.os.file_des[read_fd].name.split('/')[-1]
+    def test_elf_linux_arm_posix_syscall(self):
+        def test_syscall_read(ql, read_fd, read_buf, read_count, *args):
+            target = False
+            pathname = ql.os.file_des[read_fd].name.split('/')[-1]
         
-            # if pathname == "test_syscall_read.txt":
-                # print("test => read(%d, %s, %d)" % (read_fd, pathname, read_count))
-                # target = True
+            if pathname == "test_syscall_read.txt":
+                print("test => read(%d, %s, %d)" % (read_fd, pathname, read_count))
+                target = True
 
-            # syscall.ql_syscall_read(ql, read_fd, read_buf, read_count, *args)
+            syscall.ql_syscall_read(ql, read_fd, read_buf, read_count, *args)
 
-            # if target:
-                # real_path = ql.os.file_des[read_fd].name
-                # with open(real_path) as fd:
-                    # assert fd.read() == ql.mem.read(read_buf, read_count).decode()
-                # os.remove(real_path)
+            if target:
+                real_path = ql.os.file_des[read_fd].name
+                with open(real_path) as fd:
+                    assert fd.read() == ql.mem.read(read_buf, read_count).decode()
+                os.remove(real_path)
  
-        # def test_syscall_write(ql, write_fd, write_buf, write_count, *args):
-            # target = False
-            # pathname = ql.os.file_des[write_fd].name.split('/')[-1]
+        def test_syscall_write(ql, write_fd, write_buf, write_count, *args):
+            target = False
+            pathname = ql.os.file_des[write_fd].name.split('/')[-1]
 
-            # if pathname == "test_syscall_write.txt":
-                # print("test => write(%d, %s, %d)" % (write_fd, pathname, write_count))
-                # target = True
+            if pathname == "test_syscall_write.txt":
+                print("test => write(%d, %s, %d)" % (write_fd, pathname, write_count))
+                target = True
 
-            # syscall.ql_syscall_write(ql, write_fd, write_buf, write_count, *args)
+            syscall.ql_syscall_write(ql, write_fd, write_buf, write_count, *args)
 
-            # if target:
-                # real_path = ql.os.file_des[write_fd].name
-                # with open(real_path) as fd:
-                    # assert fd.read() == 'Hello testing\x00'
-                # os.remove(real_path)
+            if target:
+                real_path = ql.os.file_des[write_fd].name
+                with open(real_path) as fd:
+                    assert fd.read() == 'Hello testing\x00'
+                os.remove(real_path)
 
-        # def test_syscall_open(ql, open_pathname, open_flags, open_mode, *args):
-            # target = False
-            # pathname = ql.mem.string(open_pathname)
+        def test_syscall_open(ql, open_pathname, open_flags, open_mode, *args):
+            target = False
+            pathname = ql.mem.string(open_pathname)
 
-            # if pathname == "test_syscall_open.txt":
-                # print("test => open(%s, 0x%x, 0%o)" % (pathname, open_flags, open_mode))
-                # target = True
+            if pathname == "test_syscall_open.txt":
+                print("test => open(%s, 0x%x, 0%o)" % (pathname, open_flags, open_mode))
+                target = True
 
-            # syscall.ql_syscall_open(ql, open_pathname, open_flags, open_mode, *args)
+            syscall.ql_syscall_open(ql, open_pathname, open_flags, open_mode, *args)
 
-            # if target:
-                # real_path = ql.os.transform_to_real_path(pathname)
-                # assert os.path.isfile(real_path) == True
-                # os.remove(real_path)
+            if target:
+                real_path = ql.os.transform_to_real_path(pathname)
+                assert os.path.isfile(real_path) == True
+                os.remove(real_path)
 
-        # def test_syscall_unlink(ql, unlink_pathname, *args):
-            # target = False
-            # pathname = ql.mem.string(unlink_pathname)
+        def test_syscall_unlink(ql, unlink_pathname, *args):
+            target = False
+            pathname = ql.mem.string(unlink_pathname)
 
-            # if pathname == "test_syscall_unlink.txt":
-                # print("test => unlink(%s)" % (pathname))
-                # target = True
+            if pathname == "test_syscall_unlink.txt":
+                print("test => unlink(%s)" % (pathname))
+                target = True
 
-            # syscall.ql_syscall_unlink(ql, unlink_pathname, *args)
+            syscall.ql_syscall_unlink(ql, unlink_pathname, *args)
 
-            # if target:
-                # real_path = ql.os.transform_to_real_path(pathname)
-                # assert os.path.isfile(real_path) == False
+            if target:
+                real_path = ql.os.transform_to_real_path(pathname)
+                assert os.path.isfile(real_path) == False
 
-        # def test_syscall_truncate(ql, trunc_pathname, trunc_length, *args):
-            # target = False
-            # pathname = ql.mem.string(trunc_pathname)
+        def test_syscall_truncate(ql, trunc_pathname, trunc_length, *args):
+            target = False
+            pathname = ql.mem.string(trunc_pathname)
 
-            # if pathname == "test_syscall_truncate.txt":
-                # print("test => truncate(%s, 0x%x)" % (pathname, trunc_length))
-                # target = True
+            if pathname == "test_syscall_truncate.txt":
+                print("test => truncate(%s, 0x%x)" % (pathname, trunc_length))
+                target = True
 
-            # syscall.ql_syscall_truncate(ql, trunc_pathname, trunc_length, *args)
+            syscall.ql_syscall_truncate(ql, trunc_pathname, trunc_length, *args)
 
-            # if target:
-                # real_path = ql.os.transform_to_real_path(pathname)
-                # assert os.stat(real_path).st_size == 0
-                # os.remove(real_path)
+            if target:
+                real_path = ql.os.transform_to_real_path(pathname)
+                assert os.stat(real_path).st_size == 0
+                os.remove(real_path)
 
-        # def test_syscall_ftruncate(ql, ftrunc_fd, ftrunc_length, *args):
-            # target = False
-            # pathname = ql.os.file_des[ftrunc_fd].name.split('/')[-1]
+        def test_syscall_ftruncate(ql, ftrunc_fd, ftrunc_length, *args):
+            target = False
+            pathname = ql.os.file_des[ftrunc_fd].name.split('/')[-1]
 
-            # if pathname == "test_syscall_ftruncate.txt":
-                # print("test => ftruncate(%d, 0x%x)" % (ftrunc_fd, ftrunc_length))
-                # target = True
+            if pathname == "test_syscall_ftruncate.txt":
+                print("test => ftruncate(%d, 0x%x)" % (ftrunc_fd, ftrunc_length))
+                target = True
 
-            # syscall.ql_syscall_ftruncate(ql, ftrunc_fd, ftrunc_length, *args)
+            syscall.ql_syscall_ftruncate(ql, ftrunc_fd, ftrunc_length, *args)
 
-            # if target:
-                # real_path = ql.os.transform_to_real_path(pathname)
-                # assert os.stat(real_path).st_size == 0x10
-                # os.remove(real_path)
+            if target:
+                real_path = ql.os.transform_to_real_path(pathname)
+                assert os.stat(real_path).st_size == 0x10
+                os.remove(real_path)
 
-        # ql = Qiling(["../examples/rootfs/arm_linux/bin/arm_posix_syscall"], "../examples/rootfs/arm_linux", output="debug")
-        # ql.set_syscall(0x3, test_syscall_read)
-        # ql.set_syscall(0x4, test_syscall_write)
-        # ql.set_syscall(0x5, test_syscall_open)
-        # ql.set_syscall(0xa, test_syscall_unlink)
-        # ql.set_syscall(0x5c, test_syscall_truncate)
-        # ql.set_syscall(0x5d, test_syscall_ftruncate)
-        # ql.run()
-        # del ql
+        def test_syscall_pread64(ql, read_fd, read_buf, read_count, read_offset, *args):
+            target = False
+            pathname = ql.os.file_des[read_fd].name.split('/')[-1]
+        
+            if pathname == "test_syscall_pread64.txt":
+                print("test => pread64(%d, %s, %d, %d)" % (read_fd, pathname, read_count, read_offset))
+                target = True
+
+            syscall.ql_syscall_pread64(ql, read_fd, read_buf, read_count, read_offset, *args)
+
+            if target:
+                real_path = ql.os.file_des[read_fd].name
+                assert read_offset == 6, "read_offset was not expected value. Wanted 6, got %d" % (read_offset)
+                with open(real_path) as fd:
+                    check_pread = fd.read()[read_offset:]
+                    returned_size = min(len(check_pread), read_count)
+                    assert check_pread[:returned_size] == ql.mem.read(read_buf, returned_size).decode()
+                os.remove(real_path)
+
+        ql = Qiling(["../examples/rootfs/arm_linux/bin/arm_posix_syscall"], "../examples/rootfs/arm_linux", output="debug")
+        ql.set_syscall(0x3, test_syscall_read)
+        ql.set_syscall(0x4, test_syscall_write)
+        ql.set_syscall(0x5, test_syscall_open)
+        ql.set_syscall(0xa, test_syscall_unlink)
+        ql.set_syscall(0x5c, test_syscall_truncate)
+        ql.set_syscall(0x5d, test_syscall_ftruncate)
+        ql.set_syscall(0xb4, test_syscall_pread64) 
+        ql.run()
+        del ql
 
 
     def test_elf_linux_arm64(self):
@@ -460,6 +479,25 @@ class ELFTest(unittest.TestCase):
                 assert os.stat(real_path).st_size == 0x10
                 os.remove(real_path)
 
+        def test_syscall_pread64(ql, read_fd, read_buf, read_count, read_offset, *args):
+            target = False
+            pathname = ql.os.file_des[read_fd].name.split('/')[-1]
+        
+            if pathname == "test_syscall_pread64.txt":
+                print("test => pread64(%d, %s, %d, %d)" % (read_fd, pathname, read_count, read_offset))
+                target = True
+
+            syscall.ql_syscall_pread64(ql, read_fd, read_buf, read_count, read_offset, *args)
+
+            if target:
+                real_path = ql.os.file_des[read_fd].name
+                assert read_offset == 6, "read_offset was not expected value. Wanted 6, got %d" % (read_offset)
+                with open(real_path) as fd:
+                    check_pread = fd.read()[read_offset:]
+                    returned_size = min(len(check_pread), read_count)
+                    assert check_pread[:returned_size] == ql.mem.read(read_buf, returned_size).decode()
+                os.remove(real_path)
+
         ql = Qiling(["../examples/rootfs/arm64_linux/bin/arm64_posix_syscall"], "../examples/rootfs/arm64_linux", output="debug")
         ql.set_syscall(0x3f, test_syscall_read)
         ql.set_syscall(0x40, test_syscall_write)
@@ -467,6 +505,7 @@ class ELFTest(unittest.TestCase):
         ql.set_syscall(0x402, test_syscall_unlink)
         ql.set_syscall(0x2d, test_syscall_truncate)
         ql.set_syscall(0x2e, test_syscall_ftruncate)
+        ql.set_syscall(0x43, test_syscall_pread64)
         ql.run()
         del ql
 

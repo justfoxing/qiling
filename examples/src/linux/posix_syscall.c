@@ -193,6 +193,73 @@ static void syscall_unlink() {
     }
 }
 
+static void syscall_pread64() {
+    char *TEST_FILENAME = "test_syscall_pread64.txt";
+    ssize_t ret;
+    int fd;
+    int flags;
+    mode_t mode;
+    size_t len;
+    char buffer[] = "Hello testing";
+    char read_buffer[0x10] = {0};
+    int offset = 6; // should read from "testing"
+
+    flags = O_CREAT | O_WRONLY;
+    mode = 0644;
+    fd = open(TEST_FILENAME, flags, mode);
+
+    if (fd == -1) {
+        print_error();
+        exit(1);
+    }
+    
+    len = sizeof(buffer);
+    ret = write(fd, buffer, len);
+
+    if (ret != len) {
+        print_error();
+        exit(1);
+    }
+    close(fd);
+
+
+    flags = O_CREAT | O_RDONLY;
+    fd = open(TEST_FILENAME, flags, mode);
+
+    ret = pread(fd, read_buffer, len, offset);
+    printf("test: pread64(%d, %s, %d, %d) return %d.\n", fd, read_buffer, len, offset, ret);
+
+    // should only read as much as was written, minus the offset
+    if (ret != (sizeof(buffer)-offset)) {
+        print_error();
+        exit(1);
+    }
+
+    // check we got the data we expect to show the offset worked
+    if (0 != strncmp(buffer+offset, read_buffer, sizeof(buffer)-offset))
+    {
+        print_error();
+        exit(1);
+    }
+
+    // follow up with a read to show the file position didn't change
+    ret = read(fd, read_buffer, len);
+
+    if (ret != len) {
+        print_error();
+        exit(1);
+    }
+
+    // check we got the data we expect
+    if (0 != strncmp(buffer, read_buffer, len))
+    {
+        print_error();
+        exit(1);
+    }
+
+    close(fd);
+
+}
 
 
 int main(int argc, const char **argv) {
@@ -208,6 +275,8 @@ int main(int argc, const char **argv) {
     syscall_ftruncate();
 
     syscall_unlink();
+
+    syscall_pread64();
 
     return 0;
 }
