@@ -36,6 +36,7 @@ static void syscall_write() {
     mode_t mode;
     size_t len;
     char buffer[] = "Hello testing";
+    struct stat stat_buffer = {0};
 
     flags = O_CREAT | O_WRONLY;
     mode = 0644;
@@ -54,7 +55,22 @@ static void syscall_write() {
         print_error();
         exit(1);
     }
+
     close(fd);
+
+    // stat the file to test the size 
+    ret = stat(TEST_FILENAME, &stat_buffer);
+    if (ret == -1) {
+        print_error();
+        exit(1);
+    }
+    
+    // filesize should be len
+    if (stat_buffer.st_size != len)
+    {
+        print_error();
+        exit(1);
+    }
 }
 
 static void syscall_read() {
@@ -109,6 +125,7 @@ static void syscall_truncate() {
     char buffer[] = "Hello testing";
     int len;
     off_t off;
+    struct stat stat_buffer = {0};
 
     flags = O_CREAT | O_WRONLY;
     mode = 0644;
@@ -135,6 +152,18 @@ static void syscall_truncate() {
 
     /* check the file has been trucated or not. */
     /* stat(), check the st_size. should be 0*/
+    // stat the file to test the size 
+    ret = stat(TEST_FILENAME, &stat_buffer);
+    if (ret == -1) {
+        print_error();
+        exit(1);
+    }
+
+    if (stat_buffer.st_size != off)
+    {
+        print_error();
+        exit(1);
+    }
 }
 
 static void syscall_ftruncate() {
@@ -144,6 +173,7 @@ static void syscall_ftruncate() {
     int flags;
     mode_t mode;
     int len=0x10;
+    struct stat stat_buffer = {0};
 
     flags = O_CREAT | O_WRONLY;
     mode = 0644;
@@ -165,6 +195,17 @@ static void syscall_ftruncate() {
 
     /* check the file has been trucated or not. */
     /* stat(), check the st_size. should be 0x10*/
+    ret = stat(TEST_FILENAME, &stat_buffer);
+    if (ret == -1) {
+        print_error();
+        exit(1);
+    }
+    
+    if (stat_buffer.st_size != len)
+    {
+        print_error();
+        exit(1);
+    }
 }
 
 static void syscall_unlink() {
@@ -193,6 +234,58 @@ static void syscall_unlink() {
     }
 }
 
+static void syscall_fstat() {
+    char *TEST_FILENAME = "test_syscall_fstat.txt";
+    ssize_t ret;
+    int fd;
+    int flags;
+    mode_t mode;
+    size_t len;
+    char buffer[] = "Hello testing";
+    struct stat stat_buffer = {0};
+
+    flags = O_CREAT | O_WRONLY;
+    mode = 0644;
+    fd = open(TEST_FILENAME, flags, mode);
+
+    if (fd == -1) {
+        print_error();
+        exit(1);
+    }
+    
+    len = sizeof(buffer);
+    ret = write(fd, buffer, len);
+
+    if (ret != len) {
+        print_error();
+        exit(1);
+    }
+    close(fd);
+
+    flags = O_CREAT | O_RDONLY;
+    fd = open(TEST_FILENAME, flags, mode);
+
+    if (fd == -1) {
+        print_error();
+        exit(1);
+    }
+
+    ret = fstat(fd, &stat_buffer);
+    printf("test: fstat(%d, %p) return %d.\n", fd, &stat_buffer, ret);
+
+    if (ret == -1) {
+        print_error();
+        exit(1);
+    }
+
+    if (stat_buffer.st_size != len)
+    {
+        print_error();
+        exit(1);
+    }
+
+    close(fd);
+}
 
 
 int main(int argc, const char **argv) {
@@ -208,6 +301,8 @@ int main(int argc, const char **argv) {
     syscall_ftruncate();
 
     syscall_unlink();
+
+    syscall_fstat();
 
     return 0;
 }
