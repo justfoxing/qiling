@@ -31,10 +31,6 @@ def ql_syscall_open(ql, filename, flags, mode, *args, **kw):
         regreturn = -12 
     else:
         try:
-            if ql.archtype== QL_ARCH.ARM:
-                mode = 0
-
-
             flags = ql_open_flag_mapping(ql, flags)
             ql.os.file_des[idx] = ql_file.open(real_path, flags, mode)
             regreturn = idx
