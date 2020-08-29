@@ -161,6 +161,25 @@ class QlOsPosix(QlOs):
             param4 = self.ql.reg.x4
             param5 = self.ql.reg.x5
         elif self.ql.archtype == QL_ARCH.ARM:
+            """ ARM EABI has a special case for syscalls passing 64bit values: They are passed
+                in a register pair starting at the next even-numbered register.
+                See `man syscall` for more details and to check the list of affected functions.
+
+                fadvise64_64(2),   ftruncate64(2),   posix_fadvise(2),   pread64(2),   pwrite64(2),   readahead(2),
+       sync_file_range(2), and truncate64(2).
+            """
+            
+            # mapping of affected functions and the indexes of 64bit parameters 
+            64BIT_SYSCALL_PARAMS = {    "fadvise64_64": [1,2],
+                                        "ftruncate64": [1],
+                                        "posix_fadvise": [1,2],
+                                        "pread64": [3],
+                                        "pwrite64": [3],
+                                        "readahead": [1],
+                                        "sync_file_range": [1,2],
+                                        "truncate64": [1],
+            
+
             param0 = self.ql.reg.r0
             param1 = self.ql.reg.r1
             param2 = self.ql.reg.r2
